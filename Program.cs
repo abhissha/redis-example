@@ -1,4 +1,8 @@
-﻿using Bogus;
+﻿using Autofac;
+using Bogus;
+using example.DIContainer;
+using example.Model;
+using example.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -8,105 +12,109 @@ namespace example
 {
     internal class Program
     {
+        public static IDiContainer container = new DiContaner();
         static void Main(string[] args)
+        {
+            container.Register();
+            container.Get<Application>().Run();
+        }
+
+        static void Test()
         {
             //setting up connection to the redis server  
             ConnectionMultiplexer conn = ConnectionMultiplexer.Connect("localhost:6379");
             //getting database instances of the redis  
             IDatabase database = conn.GetDatabase();
-            for(int i = 10000; i <= 100000; i++)
+            var factory = new SerilizerFactory();
+            var jsonSerializer = factory.Get(SerializationType.Json);
+            var protoSerializer = factory.Get(SerializationType.proto);
+            for (int i = 5; i <= 50; i++)
             {
-                //Timer.Start();
-                var values = CustomerGenerator.Create(i);
-                //Timer.Stop();
-                Console.WriteLine($"Size: {i.ToString()}");
-                Timer.Start();
-                string serializedValue = JsonSerializer.Serialize<List<Customer>>(values);
-                database.StringSet(i.ToString(), serializedValue);
-                string employees = database.StringGet(i.ToString());
-                var deserializedValue = JsonSerializer.Deserialize<List<Customer>>(employees);
-                Timer.Stop();
+                SerializeDeserialize<Customer, string>(i, database, jsonSerializer);
+                SerializeDeserialize<Customer1, string>(i, database, protoSerializer);
+
             }
-            //set value in redis server  
-            //database.StringSet("redisKey", "redisvalue");
-            //get value from redis server  
-            //var value = database.StringGet("redisKey");
-            //Console.WriteLine("Value cached in redis server is: " + value);
             Console.ReadLine();
         }
-    }
-    public class Customer
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Bio { get; set; }
-        public Address Address { get; set; }
-    }
-    public class Address
-    {
-        public string Line1 { get; set; }
-        public string Line2 { get; set; }
-        public string PinCode { get; set; }
-    }
-    public static class Timer
-    {
-        public static DateTime StartTime { get; set; }
-        public static long StartMemory { get; set; }
-        public static DateTime StopTime { get; set; }
-        public static long EndMemory { get; set; }
-        public static void Start()
-        {
-            StartTime = DateTime.Now;
-            StartMemory=GC.GetTotalMemory(true);
-        }
 
-        public static void Stop()
+        static void SerializeDeserialize<T,U>(int i,IDatabase database, ISerializer serializer) where T: class
         {
-            StopTime = DateTime.Now;
-            EndMemory = GC.GetTotalMemory(true);
-            TimeSpan diff = StopTime - StartTime;
-            Console.WriteLine($"{diff.TotalMilliseconds} ms: {diff.TotalSeconds} s: {diff.Seconds} m: {diff.Minutes}");
-            //Console.WriteLine($"{diff.TotalMilliseconds} ms: {diff.TotalSeconds} s: {diff.Seconds} m: {diff.Minutes}");
-        }
-
-        public static void Print()
-        {
-            TimeSpan diff = StopTime - StartTime;
-            Console.WriteLine($"{diff.TotalMilliseconds} ms: {diff.TotalSeconds} s: {diff.Seconds} m: {diff.Minutes}");
+            //Timer.Start();
+            List<T> values = DataGenerator.Create<T>(i);
+            //Timer.Stop();
+            Console.WriteLine($"Size: {i.ToString()}");
+            TimerService.Start();
+            var serializedValue = serializer.Serialize<List<T>,U>(values);
+            database.StringSet(i.ToString(), serializedValue.ToString());
+            string employees = database.StringGet(i.ToString());
+            var deserializedValue = serializer.Deserialize<List<T>>(employees);
+            TimerService.Stop();
         }
     }
 
-    public class CustomerGenerator
+    public interface ISerializer
     {
-        public static List<Customer> Create(int number)
+        U Serialize<T, U>(T obj);
+
+        T Deserialize<T>(string str);
+    }
+
+    public class JsonSerializerService : ISerializer
+    {
+        public T Deserialize<T>(string str)
         {
-            var abc = new Faker<Customer>();
+            return JsonSerializer.Deserialize<T>(str);
+        }
+
+        public U Serialize<T, U>(T obj)
+        {            
+            return (U)Convert.ChangeType(JsonSerializer.Serialize(obj), typeof(U));
+        }
+    }
+
+    public class ProtoSerializtionService : ISerializer
+    {
+        public T Deserialize<T>(string str)
+        {
+            return JsonSerializer.Deserialize<T>(str);
+        }
+
+        public U Serialize<T, U>(T obj)
+        {
+            return (U)Convert.ChangeType(JsonSerializer.Serialize(obj), typeof(U));
+        }
+    }
+
+
+    public class SerilizerFactory
+    {
+        public ISerializer Get(SerializationType serType)
+        {
+            switch(serType){
+                case SerializationType.Json:
+                    return new JsonSerializerService();
+                    break;
+                case SerializationType.proto:
+                    return new ProtoSerializtionService();
+                    break;
+                default:
+                    throw new ArgumentException("not ");
+                    break;
+            }
+        }
+    }
+    public enum SerializationType
+    {
+        Json,
+        proto
+    }
+
+    public class DataGenerator
+    {
+        public static List<T> Create<T>(int number) where T: class
+        {
+            var abc = new Faker<T>();
             return abc.Generate(number);
         }
-    }
-
-    public class EmployeeGenerator
-    {
-        public static List<Employee> Create(int number)
-        {
-            var returnList = new List<Employee>();
-            for(int i = 0; i < number; i++)
-            {
-                returnList.Add(
-                    new Employee() { 
-                        Age = i + 1, 
-                        Name = $"{i.ToString()} - Name" });
-            }
-            return returnList;
-        }
-    }
-
-    public class Employee
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
-
     }
 }
