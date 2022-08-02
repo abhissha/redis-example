@@ -1,4 +1,4 @@
-﻿namespace example.Model
+﻿namespace example.library.Model
 {
     public class Customer
     {

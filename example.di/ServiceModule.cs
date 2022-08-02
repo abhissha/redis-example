@@ -11,7 +11,7 @@ namespace example.DIContainer
             {
                 builder
                     .RegisterAssemblyTypes(
-                        typeof(DiContaner).Assembly)
+                        typeof(example.library.Model.Address).Assembly)
                     .Where(t => t.Name.EndsWith("Service"))
                     .AsImplementedInterfaces()
                     .InstancePerLifetimeScope();

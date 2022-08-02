@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace example.Model
+namespace example.library.Model
 {
     [ProtoContract]
     public class Customer1

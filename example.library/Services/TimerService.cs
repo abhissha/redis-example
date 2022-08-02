@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using System.Diagnostics;
 
-namespace example.Services
+namespace example.library.Services
 {
     public class TimerService : ITimerService
     {

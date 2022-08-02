@@ -1,4 +1,4 @@
-﻿namespace example.Services
+﻿namespace example.library.Services
 {
     public interface ITimerService
     {

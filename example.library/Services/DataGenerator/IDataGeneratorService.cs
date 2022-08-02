@@ -1,4 +1,4 @@
-﻿namespace example.Services.DataGenerator
+﻿namespace example.library.Services.DataGenerator
 {
     public interface IDataGeneratorService
     {

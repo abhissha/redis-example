@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using System;
 
-namespace example.Services.DataGenerator
+namespace example.library.Services.DataGenerator
 {
     public class FakeDataListGeneratorService : IDataGeneratorService
     {

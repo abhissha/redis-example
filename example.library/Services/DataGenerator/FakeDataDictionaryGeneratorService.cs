@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace example.Services.DataGenerator
+namespace example.library.Services.DataGenerator
 {
     public class FakeDataDictionaryGeneratorService : IDataGeneratorService
     {
