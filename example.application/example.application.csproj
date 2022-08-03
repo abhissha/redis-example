@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Application.cs" />
     <Compile Remove="DataGenerator.cs" />
     <Compile Remove="Program_1.cs" />
   </ItemGroup>

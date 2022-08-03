@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 namespace example
 {
-    public class ListWithJsonSerializerScenarioBuilder : ScenarioBuilder, IScenarioBuilder
+    public class Scenario1Builder : ScenarioBuilder, IScenarioBuilder
     {
         public void Run()
         {
             
-            var fakeDataFactory = this.dataGeneratorFactoryService.Get(DataGeneratorTypeEnum.List);
+            var fakeDataFactory = this.dataGeneratorFactory.Get(DataGeneratorTypeEnum.List);
             
             var serializer = this.serilizerFactory.Get(SerializationType.Json);            
             ConnectionMultiplexer conn = ConnectionMultiplexer.Connect("localhost:6379");
@@ -31,11 +31,6 @@ namespace example
                 var deserializedValue = serializer.Deserialize<string,List<Customer>>(serializedCustomers);
                 this.timerService.Stop("Deserilization Time:");
             }
-        }
-
-        public void GenerateData()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

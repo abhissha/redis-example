@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Scenario\ListWithJsonSerializerScenarioBuilder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="protobuf-net" Version="3.1.17" />

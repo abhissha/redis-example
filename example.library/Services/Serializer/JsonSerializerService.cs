@@ -7,7 +7,7 @@ namespace example.library.Services.Serializer
     {
         public U Deserialize<T, U>(T str)
         {
-            return (U)Convert.ChangeType(JsonSerializer.Deserialize<T>(str.ToString()), typeof(U));
+            return (U)Convert.ChangeType(JsonSerializer.Deserialize<U>(str.ToString()), typeof(U));
         }
 
         public U Serialize<T, U>(T obj)

@@ -3,7 +3,7 @@
     public interface ITimerService
     {
         void Start();
-        void Stop();
+        void Stop(string messageTemplate);
         void Reset();
         bool IsRunning();
     }

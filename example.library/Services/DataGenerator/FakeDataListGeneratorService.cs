@@ -1,5 +1,7 @@
 ﻿using Bogus;
+using example.library.Model;
 using System;
+using System.Collections.Generic;
 
 namespace example.library.Services.DataGenerator
 {
@@ -7,7 +9,9 @@ namespace example.library.Services.DataGenerator
     {
         public U Generate<T, U>(int numberOfDataToGenerate) where T : class
         {
-            return (U)Convert.ChangeType(new Faker<T>().Generate(numberOfDataToGenerate), typeof(U));
+            return typeof(T) == typeof(Customer) ? 
+                (U)Convert.ChangeType(new CustomerFaker().Generate(numberOfDataToGenerate), typeof(List<T>)) : 
+                (U)Convert.ChangeType(new Faker<T>().Generate(numberOfDataToGenerate), typeof(U));
         }
     }
 

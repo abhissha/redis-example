@@ -11,7 +11,10 @@ namespace example.DIContainer
         {
             try
             {
-                Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+                Log.Logger = new LoggerConfiguration()
+                                    .WriteTo.Console()
+                                    .WriteTo.File("log.txt")
+                                    .CreateLogger();
                 builder.RegisterLogger();
             }
             catch (Exception ex)

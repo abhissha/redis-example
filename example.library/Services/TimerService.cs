@@ -27,10 +27,10 @@ namespace example.library.Services
             stopWatch = Stopwatch.StartNew();
         }
 
-        public void Stop()
+        public void Stop(string messageTemplate)
         {
             stopWatch.Stop();
-            logger.Information($"Total Execution Time: {stopWatch.ElapsedMilliseconds} ms");
+            logger.Information($"{messageTemplate}. Total Execution Time: {stopWatch.ElapsedMilliseconds} ms");
         }
     }    
 }

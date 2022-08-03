@@ -7,11 +7,11 @@ namespace example
     {
         static void Main(string[] args)
         {
-            DiContaner.AddRegistration<Application>();
+            //DiContaner.AddRegistration<Application>();
             DiContaner.AddRegistration<MediaTrApplication>();
             var container = DiContaner.Register();
-            container.Resolve<Application>().Run(); ;                       
-            container.Resolve<MediaTrApplication>().Run();
+           // container.Resolve<Application>().Run();                      
+            //container.Resolve<MediaTrApplication>().Run();
         }
     }
 }
